@@ -5,7 +5,7 @@ import doctest
 
 def hash_calc(string, algo_name):
     """
-    Функция вычисления хэша строки по заданному адгоритму
+    Функция вычисления хэша строки по заданному алгоритму
     :param string: строка
     :param algo_name: название алгоритма
     :return: хэш строки
@@ -19,7 +19,7 @@ def hash_calc(string, algo_name):
 if __name__ == '__main__':
     doctest.testmod()
     nested_list = []
-    
+
     with open("need_hashes.csv", encoding='utf-8') as csvfile:
         csvtable = csv.reader(csvfile, delimiter=';')
         for row in csvtable:
