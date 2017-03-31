@@ -12,17 +12,16 @@ with open("file1/parts.md5") as parts_md5:
 dir_list = os.listdir("file1")
 dir_list.remove('parts.md5')
 
-final_list = []
 counter = 0
-for hash in hashes:
-    for file in dir_list:
+for line in hashes:
+    for file in dir_list[:]:
         with open("file1/{}".format(file), "rb") as f:
             content = f.read()
             h = hashlib.md5()
             h.update(content)
             counter += 1
             print(counter)
-            if h.hexdigest() == hash:
-                final_list.append(content)
+            if h.hexdigest() == line:
                 with open("blablablah", "ba") as f_out:
                     r = f_out.write(content)
+                dir_list.remove(file)
