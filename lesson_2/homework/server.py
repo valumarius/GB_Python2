@@ -38,15 +38,19 @@ class MemTCPHandler(socketserver.BaseRequestHandler):
             print("Transaction")
             if self.transact_type == 0:
                 print("Сервисная транзакция")
+                self.request.sendall(b'ok')
             elif self.transact_type == 1:
                 print("Платежная транзакция")
+                self.request.sendall(b'ok')
             elif self.transact_type == 2:
                 print("Инкассация")
+                self.request.sendall(b'ok')
             else:
                 print('Неизвестный запрос')
-            self.request.sendall(b'ok')
+                self.request.sendall(b'not ok')
         else:
-            print('Неизвестный запрос')    
+            print('Неизвестный запрос')
+            self.request.sendall(b'not ok')
 
           
 HOST, PORT = 'localhost', 9999
