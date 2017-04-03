@@ -25,6 +25,7 @@ def seconds_from_midnight(now):
 print('Клиент запущен')
 
 # now = datetime.now()
+transact_type = 8
 while True:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((HOST, PORT))
@@ -41,7 +42,7 @@ while True:
     if transact_type == 9:
         sock.sendall(b'qq')
         break
-    else:
+    elif transact_type != 8:
         try:
             ttype_bin = transact_type.to_bytes(1, 'big')
             packet = b'zz' + date_encode(datetime.now()) + \
