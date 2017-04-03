@@ -22,35 +22,37 @@ class MemTCPHandler(socketserver.BaseRequestHandler):
                         self.hours, self.minutes, self.seconds)
 
     def handle(self):
-        self.data = self.request.recv(1024)
-        self.header = str(self.data[:2], 'ascii')
-        self.intdate = int.from_bytes(self.data[2:4], 'big')
-        self.intseconds = int.from_bytes(self.data[4:7], 'big')
-        self.datetime = self.intdate_to_datetime(self.intdate,
-                                                 self.intseconds)
-        self.transact_type = self.data[7]
-        print("Клиент {} сообщает {} {} {}".format(self.client_address[0],
-                                                   self.header,
-                                                   self.datetime,
-                                                   self.transact_type))
-
-        if self.header == 'zz':
-            print("Transaction")
-            if self.transact_type == 0:
-                print("Сервисная транзакция")
-                self.request.sendall(b'ok')
-            elif self.transact_type == 1:
-                print("Платежная транзакция")
-                self.request.sendall(b'ok')
-            elif self.transact_type == 2:
-                print("Инкассация")
-                self.request.sendall(b'ok')
+        self.data = self.request.recv(8)
+        if len(self.data) == 8:
+            self.header = str(self.data[:2], 'ascii')
+            self.intdate = int.from_bytes(self.data[2:4], 'big')
+            self.intseconds = int.from_bytes(self.data[4:7], 'big')
+            self.datetime = self.intdate_to_datetime(self.intdate,
+                                                     self.intseconds)
+            self.transact_type = self.data[7]
+            print("Клиент {} сообщает {} {} {}".format(self.client_address[0],
+                                                       self.header,
+                                                       self.datetime,
+                                                       self.transact_type))
+            if self.header == 'zz':
+                print("Transaction")
+                if self.transact_type == 0:
+                    print("Сервисная транзакция")
+                    self.request.sendall(b'ok')
+                elif self.transact_type == 1:
+                    print("Платежная транзакция")
+                    self.request.sendall(b'ok')
+                elif self.transact_type == 2:
+                    print("Инкассация")
+                    self.request.sendall(b'ok')
+                else:
+                    print('Неизвестный запрос')
+                    self.request.sendall(b'not ok')
             else:
                 print('Неизвестный запрос')
                 self.request.sendall(b'not ok')
         else:
-            print('Неизвестный запрос')
-            self.request.sendall(b'not ok')
+            print('Неверный размер пакета')
 
           
 HOST, PORT = 'localhost', 9999
