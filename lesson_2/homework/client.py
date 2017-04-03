@@ -23,24 +23,34 @@ def seconds_from_midnight(now):
     return delta.seconds.to_bytes(3, 'big')
 
 print('Клиент запущен')
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((HOST, PORT))
 
 # now = datetime.now()
-print('Введите тип транзакции: \n'
-      '0 - сервисная \n'
-      '1 - платежная \n'
-      '2 - инкассация')
-transact_type = int(input())
-ttype_bin = transact_type.to_bytes(1, 'big')
+while True:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((HOST, PORT))
 
-packet = b'zz' + date_encode(datetime.now()) + \
-         seconds_from_midnight(datetime.now()) + ttype_bin
-sock.sendall(packet)
-
-recvd = str(sock.recv(1024), 'ascii')
-
-print(recvd)
+    print('Введите тип транзакции: \n'
+          '0 - сервисная \n'
+          '1 - платежная \n'
+          '2 - инкассация\n'
+          '9 - выход')
+    try:
+        transact_type = int(input())
+    except ValueError:
+        print('Неверный ввод')
+    if transact_type == 9:
+        sock.sendall(b'qq')
+        break
+    else:
+        try:
+            ttype_bin = transact_type.to_bytes(1, 'big')
+            packet = b'zz' + date_encode(datetime.now()) + \
+                     seconds_from_midnight(datetime.now()) + ttype_bin
+            sock.sendall(packet)
+            recvd = str(sock.recv(1024), 'ascii')
+            print(recvd)
+        except OverflowError:
+            print('Неверный ввод')
 
 sock.close()
 
